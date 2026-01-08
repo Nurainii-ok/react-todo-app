@@ -1,59 +1,68 @@
 import { useState } from "react";
-import "./index.css";
 
 function App() {
+  // state untuk menyimpan list todo
   const [todos, setTodos] = useState([]);
-  const [text, setText] = useState("");
 
+  // state untuk input todo baru
+  const [newTodo, setNewTodo] = useState("");
+
+  // fungsi menambah todo
   const addTodo = () => {
-    if (text.trim() === "") return;
+    if (newTodo.trim() === "") return;
 
-    setTodos([
-      ...todos,
-      {
-        id: Date.now(),
-        text,
-        completed: false,
-      },
-    ]);
-    setText("");
+    const todo = {
+      id: Date.now(),
+      title: newTodo,
+      completed: false,
+    };
+
+    setTodos([...todos, todo]);
+    setNewTodo("");
   };
 
+  // fungsi toggle selesai / belum
   const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id
-          ? { ...todo, completed: !todo.completed }
-          : todo
-      )
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id
+        ? { ...todo, completed: !todo.completed }
+        : todo
     );
+
+    setTodos(updatedTodos);
   };
 
+  // fungsi hapus todo
   const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    const filteredTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(filteredTodos);
   };
 
   return (
-    <div className="container">
-      <h1>Todo App</h1>
+    <div style={{ padding: "20px" }}>
+      <h2>Todo List</h2>
 
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="Tambah todo..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button onClick={addTodo}>Tambah</button>
-      </div>
+      <input
+        type="text"
+        value={newTodo}
+        onChange={(e) => setNewTodo(e.target.value)}
+        placeholder="Tambah todo"
+      />
+      <button onClick={addTodo}>Tambah</button>
 
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id} className={todo.completed ? "done" : ""}>
-            <span onClick={() => toggleTodo(todo.id)}>
-              {todo.text}
+          <li key={todo.id}>
+            <span
+              onClick={() => toggleTodo(todo.id)}
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+                cursor: "pointer",
+              }}
+            >
+              {todo.title}
             </span>
-            <button onClick={() => deleteTodo(todo.id)}>❌</button>
+            <button onClick={() => deleteTodo(todo.id)}>Hapus</button>
           </li>
         ))}
       </ul>
